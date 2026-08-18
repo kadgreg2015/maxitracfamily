@@ -3,11 +3,13 @@ workflows:
     name: MaxiTrack Family - iOS
     max_build_duration: 60
     instance_type: mac_mini_m2
+    integrations:
+      app_store_connect: codemagic_asc # doit correspondre EXACTEMENT au nom donné à l'intégration dans Codemagic UI
     environment:
-      groups:
-        - app_store_credentials # ajouté dans Codemagic UI : App Store Connect API key
+      ios_signing:
+        distribution_type: app_store
+        bundle_identifier: com.maxitrack.family
       vars:
-        BUNDLE_ID: "com.maxitrack.family"
         XCODE_WORKSPACE: "ios/Runner.xcworkspace"
         XCODE_SCHEME: "Runner"
       flutter: stable
