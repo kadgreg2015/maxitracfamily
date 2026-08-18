@@ -28,6 +28,10 @@ workflows:
         script: |
           flutter packages pub get
 
+      - name: Forcer la migration du projet Xcode (sans signature)
+        script: |
+          flutter build ios --release --no-codesign
+
       - name: Récupérer/créer les fichiers de signature
         script: |
           app-store-connect fetch-signing-files "$BUNDLE_ID" \
