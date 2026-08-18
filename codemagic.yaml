@@ -6,6 +6,8 @@ workflows:
     integrations:
       app_store_connect: maxitrack
     environment:
+      groups:
+        - signing # doit contenir CERTIFICATE_PRIVATE_KEY
       vars:
         BUNDLE_ID: "com.maxitrack.family"
         APP_STORE_APPLE_ID: 6802748974
@@ -34,14 +36,20 @@ workflows:
         script: |
           app-store-connect fetch-signing-files "$BUNDLE_ID" \
             --type IOS_APP_STORE \
+            --certificate-key=@env:CERTIFICATE_PRIVATE_KEY \
             --create
           keychain initialize
           keychain add-certificates
           xcode-project use-profiles
           echo "--- Identités de signature dans le keychain ---"
-          security find-identity -v -p codesigning
+          IDENTITIES=$(security find-identity -v -p codesigning)
+          echo "$IDENTITIES"
           echo "--- Profils de provisioning récupérés ---"
           ls -la "$HOME/Library/MobileDevice/Provisioning Profiles/" || true
+          if echo "$IDENTITIES" | grep -q "^ *0 valid identities found"; then
+            echo "ERREUR: aucun certificat de signature valide dans le keychain après fetch-signing-files/keychain add-certificates." >&2
+            exit 1
+          fi
 
       - name: Build IPA Flutter (release)
         script: |
