@@ -6,6 +6,8 @@ workflows:
     integrations:
       app_store_connect: maxitrack
     environment:
+      groups:
+        - signing # doit contenir CERTIFICATE_PRIVATE_KEY (même certificat de distribution que l'app "maxitrack")
       vars:
         BUNDLE_ID: "com.maxitrack.family"
         APP_STORE_APPLE_ID: 6802748974
@@ -30,6 +32,7 @@ workflows:
         script: |
           app-store-connect fetch-signing-files "$BUNDLE_ID" \
             --type IOS_APP_STORE \
+            --certificate-key=@env:CERTIFICATE_PRIVATE_KEY \
             --create
           keychain initialize
           keychain add-certificates
