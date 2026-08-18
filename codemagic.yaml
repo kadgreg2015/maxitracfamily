@@ -28,9 +28,9 @@ workflows:
         script: |
           flutter packages pub get
 
-      - name: Forcer la migration du projet Xcode (sans signature)
+      - name: Forcer la migration du projet Xcode (sans build ni signature)
         script: |
-          flutter build ios --release --no-codesign
+          flutter build ipa --release --config-only
 
       - name: Récupérer/créer les fichiers de signature
         script: |
